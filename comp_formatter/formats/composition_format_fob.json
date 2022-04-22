@@ -1,0 +1,77 @@
+{
+    "MACRO_INIT": "this setVariable ['IS_FOB', true, true];this allowDamage false;",
+    "COMMON_GROUPS": [
+        "hbarrier",
+        "fence",
+        "cup_a1_road_voidpathxvoidpath"
+    ],
+    "MACROS": [
+        {
+            "classname_substring": "laptop",
+            "varname": "FOB_TELEPORTER",
+            "init_string": "",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Our FOB teleporter / Command Terminal"
+        },
+        {
+            "classname_substring": "cup_a1_road_voidpathxvoidpath",
+            "varname": "",
+            "init_string": "",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Experimental, Dynamic Vehicle Spawn-Points"
+        },
+        {
+            "classname_substring": "b_slingload_01_fuel_f",
+            "varname": "",
+            "init_string": "[this, 100] call ace_refuel_fnc_makeSource;",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Huron Fuel Tank"
+        },
+        {
+            "classname_substring": "B_Slingload_01_Ammo_F",
+            "varname": "",
+            "init_string": "[this, 100] call ace_rearm_fnc_makeSource;",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Huron Ammo Container"
+        },
+        {
+            "classname_substring": "US_WarfareBVehicleServicePoint_Base_EP1",
+            "varname": "FOB_SERVICE_POINT",
+            "init_string": "this setVariable['ACE_isRepairFacility', true, true];",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Multipurpose Service Point (crates, repair facility)"
+        },
+        {
+            "classname_substring": "B_supplyCrate_F",
+            "varname": "",
+            "init_string": "[this, true] call ace_arsenal_fnc_initBox;",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Ace Arsenal Crate"
+        },
+        {
+            "classname_substring": "Land_Cargo_House_V1_F",
+            "varname": "",
+            "init_string": "this setVariable ['ace_medical_isMedicalFacility', true, true];",
+            "init_is_file": false,
+            "init_file_name": "",
+            "overwrite_varname": true,
+            "description": "Medical Facility Inside of FOB, can also pull static weapons from it (code is clientside and may change soon)."
+        }
+    ],
+    "REPLACE_CLASSNAME": [
+        ["example_placeholder_1", "Example_Replacement_1"],
+        ["example_random", "Example_Replacement"]
+    ]
+}
