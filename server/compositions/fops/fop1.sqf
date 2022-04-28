@@ -1,8 +1,7 @@
 /*
-server\compositions\fop1.sqf
-[getPos player] execVM "server\compositions\fop1.sqf";
+server\compositions\ + CURRENT_FOP_TYPE
+[getPos player] execVM "server\compositions\fops\fop1.sqf";
 */
-
 
 /*
 Grab data:
@@ -35,12 +34,8 @@ _items = [
 	["CUP_A2_Road_mud_0_2000",[5.58057,-18.542,0],167.03,1,0,[],"","this setVariable ['IS_FOP', true, true];",true,false]
 ];
 
-systemChat format["%1", _pos];
-
 profileNameSpace setVariable ["SAVED_FOP_LOCATION", [_pos select 0, _pos select 1, _pos select 2]];
 missionNameSpace setVariable ["FOP_LOCATION", [_pos select 0, _pos select 1, _pos select 2], true];
-
-systemChat format["FOP TEST: %1", missionNameSpace getVariable ["FOP_LOCATION", false]];
 
 [_pos, 0, _items, 0] call BIS_fnc_objectsMapper;
 
@@ -50,5 +45,7 @@ _marker setMarkerColor "ColorYellow"; // Blue.
 _marker setMarkerText "FOB Bravo"; // Text.
 
 publicVariable "FOP_LOCATION";
+
+systemChat format["FOP SPAWN SCRIPT: %1", missionNameSpace getVariable ["FOP_LOCATION", false]];
 
 

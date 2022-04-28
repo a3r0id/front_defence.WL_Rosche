@@ -9,6 +9,7 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 	private _blufor = allUnits select {side _x == WEST};
 	private _opfor  = allUnits select {side _x == EAST};
 
+    // If there is OPFOR & BLFOR THEN START THE FRONT DEFENCE ELSE IDLE
 	if (count _opfor > 0 && count _blufor > 0) then {
 
 
@@ -122,6 +123,7 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 
 		};
 
+/*
 		// These guys are like linebackers, they are coming from the outside and sweep into the front.
 		{
 			// Redundant checks - hotfix :(
@@ -149,26 +151,20 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 			_wp setWaypointLoiterRadius _general_fronts_radians;
 			_wp setWaypointLoiterType "CIRCLE_L";		
 
-			systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
+			//systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
 
 			// is: opfor/alive/not in vehicle/outside respective front.
 		} forEach allGroups findif {
 			({ alive _x } count units _x > 0 ) 
-			&& (side _x isEqualTo east) 
+			&& (side (leader _x) isEqualTo east) 
 			&& (([_x] call fnc_groupMedianPosition) distance _front > _ofdistance * 2) 
 			&& !([_x] call fnc_groupHasVehicle)
 			&& !([_x] call fnc_shouldIgnoreGroupByVehicleIndication)
+			&& (_x getVariable["IS_MANAGED", false] == false)
 		};
-
+*/
 	};
-
 	sleep 10;
-
 };
-
-
-
-
-// Todo: cut msirce in half, and place a marker at the center of the tip of the half- circle.
 
 

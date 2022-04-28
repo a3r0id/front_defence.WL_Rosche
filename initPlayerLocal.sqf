@@ -4,7 +4,7 @@ params ["_player", "_didJIP"];
 
 FD_HAS_ADDACTIONS = false;
 COMMANDER_NAME    = "Commander@Eule 6";
-COMMANDER_TERMINAL= "Land_Laptop_device_F"; // className of object that acts as terminal for commander
+COMMANDER_TERMINAL= "Land_Laptop_device_F"; // className of object that acts as actions terminal for players.
 
 // Pull a resupply crate from the supply service point
 fnc_getCrate = {
@@ -87,8 +87,15 @@ _groupId  = groupId group player;
     * 2: Parent path of the new action <ARRAY> (Example: `["ACE_SelfActions", "ACE_Equipment"]`)
     * 3: Action <ARRAY>
     */
+    // RESUPPLY CRATES
+    private _resupplyRootMenu = [
+        "resupplyMenuRoot",
+        "Resupply",
+        "",
+        {}, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions"], _resupplyRootMenu] call ace_interact_menu_fnc_addActionToClass;   
     private _action = [
-        "Grab Mixed Resupply",
+        "ace_resupply_mixed_crate",
         "Mixed Resupply",
         "",
         {
@@ -97,20 +104,20 @@ _groupId  = groupId group player;
             hint "Grabbed Mixed Resupply";
             // Pickup the crate
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass; 
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "resupplyMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;
     private _action = [
-        "Grab CDC Resupply",
-        "CDC Resupply",
+        "ace_resupply_medical_crate",
+        "Medical Resupply",
         "",
         {
             if !(player isEqualTo _player) exitWith {};
             _crate = ["medical_resupply", _player, []] call fnc_getCrate;
-            hint "Grabbed CDC Resupply";
+            hint "Grabbed Medical Resupply";
             // Pickup the crate
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;     
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "resupplyMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;     
     private _action = [
-        "Grab AT Resupply",
+        "ace_resupply_at_crate",
         "AT Resupply",
         "",
         {
@@ -119,9 +126,9 @@ _groupId  = groupId group player;
             hint "Grabbed AT Resupply";
             // Pickup the crate
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;      
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "resupplyMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;      
     private _action = [
-        "Grab empty Resupply",
+        "ace_resupply_empty_crate",
         "Empty Resupply",
         "",
         {
@@ -130,9 +137,16 @@ _groupId  = groupId group player;
             hint "Grabbed Empty Resupply";
             // Pickup the crate
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;      
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "resupplyMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;      
+
 
     // STATIC WEAPONS SPAWNER
+        private _staticSpawnerRootMenu = [
+        "staticSpawnerMenuRoot",
+        "Static Weapons",
+        "",
+        {}, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions"], _staticSpawnerRootMenu] call ace_interact_menu_fnc_addActionToClass;   
     private _action = [
         "Grab TOW Launcher",
         "TOW Launcher",
@@ -141,8 +155,7 @@ _groupId  = groupId group player;
             if !(player isEqualTo _player) exitWith {};
             _weapon = ["RHS_TOW_TriPod_USMC_D", _player] call fnc_getStaticWeapon;
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["Land_Cargo_House_V1_F" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;      
-
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "staticSpawnerMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;      
     private _action = [
         "Grab AA Pod",
         "AA Pod",
@@ -151,8 +164,7 @@ _groupId  = groupId group player;
             if !(player isEqualTo _player) exitWith {};
             _weapon = ["RHS_Stinger_AA_pod_USMC_D", _player] call fnc_getStaticWeapon;
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["Land_Cargo_House_V1_F" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;   
-
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "staticSpawnerMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;   
     private _action = [
         "Grab MK19",
         "MK19",
@@ -161,8 +173,7 @@ _groupId  = groupId group player;
             if !(player isEqualTo _player) exitWith {};
             _weapon = ["RHS_MK19_TriPod_USMC_D", _player] call fnc_getStaticWeapon;
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["Land_Cargo_House_V1_F" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;
-
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "staticSpawnerMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;
     private _action = [
         "Grab Mortar",
         "Mortar",
@@ -171,8 +182,7 @@ _groupId  = groupId group player;
             if !(player isEqualTo _player) exitWith {};
             _weapon = ["B_T_Mortar_01_F", _player] call fnc_getStaticWeapon;
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["Land_Cargo_House_V1_F" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;    
-
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "staticSpawnerMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;    
     private _action = [
         "Grab M2 Static",
         "M2 Static",
@@ -181,8 +191,7 @@ _groupId  = groupId group player;
             if !(player isEqualTo _player) exitWith {};
             _weapon = ["RHS_M2StaticMG_D", _player] call fnc_getStaticWeapon;
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["Land_Cargo_House_V1_F" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;       
-
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "staticSpawnerMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;       
     private _action = [
         "Grab M2 Static Mini",
         "M2 Static Mini",
@@ -191,9 +200,9 @@ _groupId  = groupId group player;
             if !(player isEqualTo _player) exitWith {};
             _weapon = ["RHS_M2StaticMG_MiniTripod_D", _player] call fnc_getStaticWeapon;
         }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction;
-    ["Land_Cargo_House_V1_F" , 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToClass;          
+    ["US_WarfareBVehicleServicePoint_Base_EP1" , 0, ["ACE_MainActions", "staticSpawnerMenuRoot"], _action] call ace_interact_menu_fnc_addActionToClass;          
 
-    // Terminal - Build Menu
+    // Terminal - Build Menu //////////////////////////////
     [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
     "openBuildMenu",
     "Purchase Menu",
@@ -203,71 +212,86 @@ _groupId  = groupId group player;
         [_player] execVM "client\build_menu.sqf";            
     }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;     
 
+
+    // Terminal - FOB Menu ///////////////////////////////
+    _menuRoot = [ "fobMenuRoot", "FOB Menu", "", {}, {true}] call ace_interact_menu_fnc_createAction;
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], _menuRoot] call ace_interact_menu_fnc_addActionToClass;    
+
+
     // Terminal - Build FOB
-    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions", "fobMenuRoot"], [
     "openBuildFob",
     "Build FOB",
     "",
     {
         private _check_fob = [] call fnc_getFobLocation;
         if (_check_fob isEqualTo false) then {
-            private _result = ["Forward Operations Base is ready to be built. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
-            if (_result) then {
-                hint "Select a position on the map to deploy the FOB";
-                openMap true;
-                player onMapSingleClick {
-                    onMapSingleClick '';
-                    [[_pos], "server\compositions\fob.sqf"] remoteExec ["execVM", 2];
-                    systemChat "FOB Deployed";
-                    player setPos _pos;
-                    openMap false;
-                    true
-                };
-            };		
+            [] spawn {
+                private _result = ["Forward Operations Base is ready to be built. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
+                if (_result) then {
+                    hint "Select a position on the map to deploy the FOB";
+                    openMap true;
+                    player onMapSingleClick {
+                        onMapSingleClick '';
+                        [[_pos], "server\compositions\fobs\fob1.sqf"] remoteExec ["execVM", 2];
+                        hint "FOB Deployed";
+                        player setPos _pos;
+                        openMap false;
+                        true
+                    };
+                };	                
+            };	
         } else {
             hint "FOB is already deployed.";
         };        
     }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;         
 
     // Terminal - Destroy FOB
-    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions", "fobMenuRoot"], [
     "openDestroyFob",
     "Dismantle FOB",
     "",
     {
         private _check_fob = [] call fnc_getFobLocation;
         if (_check_fob isEqualTo false) then {
-            systemChat "FOB is not deployed";
+            hint "FOB is not deployed";
         } else {
-            private _result = ["Forward Operations Base is ready to be dismantled. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
-            if (_result) then {
-                [[], "server\compositions\delete_fob.sqf"] remoteExec ["execVM", 2];
-                systemChat "FOB Dismantled!";
+            [] spawn {
+                private _result = ["Forward Operations Base is ready to be dismantled. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
+                if (_result) then {
+                    [[], "server\compositions\delete_composition\delete_fob.sqf"] remoteExec ["execVM", 2];
+                    hint "FOB Dismantled!";
+                };                
             };
         };        
     }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;         
 
+    // Terminal - FOP Menu ///////////////////////////////
+    _menuRoot = [ "fopMenuRoot", "FOP Menu", "", {}, {true}] call ace_interact_menu_fnc_createAction;
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], _menuRoot] call ace_interact_menu_fnc_addActionToClass;    
 
     // Terminal - Build FOP
-    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions", "fopMenuRoot"], [
     "openBuildFop",
     "Build FOP",
     "",
     {
         private _check_fop = [] call fnc_getFopLocation;
         if (_check_fop isEqualTo false) then {
-            private _result = ["Forward Outpost is ready to be built. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
-            if (_result) then {
-                hint "Select a position on the map to deploy the FOP";
-                openMap true;
-                player onMapSingleClick {
-                    onMapSingleClick '';
-                    [[_pos], "server\compositions\fop1.sqf"] remoteExec ["execVM", 2];
-                    systemChat "FOP Deployed";
-                    player setPos _pos;
-                    openMap false;
-                    true
-                };
+            [] spawn {
+                private _result = ["Forward Outpost is ready to be built. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
+                if (_result) then {
+                    hint "Select a position on the map to deploy the FOP";
+                    openMap true;
+                    player onMapSingleClick {
+                        onMapSingleClick '';
+                        [[_pos], "server\compositions\fops\fop1.sqf"] remoteExec ["execVM", 2];
+                        hint "FOP Deployed";
+                        player setPos _pos;
+                        openMap false;
+                        true
+                    };
+                };                
             };
         } else {
             hint "FOP is already deployed";
@@ -275,50 +299,52 @@ _groupId  = groupId group player;
     }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;         
 
     // Terminal - Destroy FOP
-    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions", "fopMenuRoot"], [
     "openDestroyFop",
     "Dismantle FOP",
     "",
     {
         private _check_fop = [] call fnc_getFopLocation;
         if (_check_fop isEqualTo false) then {
-            systemChat "FOP is not deployed";
+            hint "FOP is not deployed";
         } else {
-            private _result = ["Forward Outpost is ready to be dismantled. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
-            if (_result) then {
-                [[], "server\compositions\delete_fop.sqf"] remoteExec ["execVM", 2];
-                systemChat "FOP Dismantled!";
+            [] spawn {
+                private _result = ["Forward Outpost is ready to be dismantled. Would you like to continue?", "Confirm", true, true] call BIS_fnc_guiMessage;
+                if (_result) then {
+                    [[], "server\compositions\delete_composition\delete_fop.sqf"] remoteExec ["execVM", 2];
+                    hint "FOP Dismantled!";
+                };                
             };
         };
-    }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;         
+    }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;     
+
+    // Terminal - FOP Menu ///////////////////////////////
+    _menuRoot = [ "logiMenuRoot", "Logistics Menu", "", {}, {true}] call ace_interact_menu_fnc_createAction;
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], _menuRoot] call ace_interact_menu_fnc_addActionToClass;        
 
     // Terminal - Deploy To FOP
-    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions", "logiMenuRoot"], [
     "doTeleportFobToFop",
     "Deploy To Forward Outpost",
     "",
     {
 		private _fop_lo = [] call fnc_getFopLocation;
 		if (_fop_lo isEqualTo false) then {
-			systemChat "No Forward Outpost Location Set! Is a Forward Outpost present?";
+			hint "No Forward Outpost Location Set! Is a Forward Outpost present?";
 		} else {
 			player setPos _fop_lo;
 		};        
     }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;         
 
     // Terminal - Create Drone
-    [COMMANDER_TERMINAL, 0, ["ACE_MainActions"], [
+    [COMMANDER_TERMINAL, 0, ["ACE_MainActions", "logiMenuRoot"], [
     "doCreateDrone",
     "Create Drone (CLEAR SPAWN AREA!!!)",
     "",
     {
-		private _fop_lo = [] call fnc_getFopLocation;
-		if (_fop_lo isEqualTo false) then {
-			systemChat "No Forward Outpost Location Set! Is a Forward Outpost present?";
-		} else {
-			player setPos _fop_lo;
-		};        
-    }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;         
+        private _drone = "ITC_Land_B_UAV_AR2i";
+        [[player, _drone], "server\spawn_drone.sqf"] remoteExec ["execVM", 2];
+    }, {true},{},[], [0,0,0], 100] call ace_interact_menu_fnc_createAction] call ace_interact_menu_fnc_addActionToClass;       
 
 //};
 

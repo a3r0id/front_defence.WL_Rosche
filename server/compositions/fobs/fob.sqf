@@ -70,14 +70,13 @@ _items = [
 	["ModuleRespawnVehicle_F",[91.3281,16.7197,0],0,1,0,[],"respawn_vehicle_west","this setVariable ['IS_FOB', true, true];",true,false]
 ];
 
-
 private _initScript = "";
-
 {
 	private _p = [] call fnc_randPos;
 	private _veh = _x createVehicle _p;
 	[[_veh], "server\asset.sqf"] remoteExec ["execVM", 2];
 	systemChat format ["%1 spawned at %2", _veh, _p];
+
 } forEach ([profileNameSpace, "SAVED_PURCHASED_VEHICLES", []] call BIS_fnc_getServerVariable);
 
 systemChat format["%1", _pos];

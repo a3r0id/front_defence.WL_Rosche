@@ -158,13 +158,36 @@ fnc_shouldIgnoreGroupByVehicleIndication = {
 	_should_ignore
 };
 
+fnc_hasObstruction = {
+	params["_pos", ["_radius", 1]]; // Default Radius: 1 meter
+	_hasObstruction = false;
+	private _nearbyObjects = nearestObjects [_pos, [], _radius];
+	systemChat format ["NEARBY OBSTRUCTIONS: %1", _nearbyObjects];
+	if ((count _nearbyObjects) > 1 ) then {
+		_hasObstruction = true;
+	};
+	_hasObstruction
+};
+
+fnc_getEmptySpawnPad = {
+    private _padPos     = false;
+    {
+        if (typeOf _x isEqualTo "CUP_A1_Road_VoidPathXVoidPath") then {
+			systemChat format ["Obstructed: %1", [getPos _x, 5] call fnc_hasObstruction];
+            if !([getPos _x, 5] call fnc_hasObstruction) then {
+                _padPos = getPos _x;
+                break;
+            };
+        };
+    } forEach allMissionObjects "";
+    _padPos
+};
+
 // CONFIG, FOR NOW...
 
 // Set Global Variables
 FUNDING_SYMBOL           = "$";
 FUNDING_TYPE             = "USD";
-COMMAND_TERMINAL_OBJECT  = "";
-
 
 FD_supply_crates = [
 	[

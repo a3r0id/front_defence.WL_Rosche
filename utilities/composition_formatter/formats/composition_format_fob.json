@@ -9,7 +9,7 @@
         {
             "classname_substring": "laptop",
             "varname": "FOB_TELEPORTER",
-            "init_string": "",
+            "init_string": "[this, true, [0,1,1], 0, true] call ace_dragging_fnc_setCarryable;",
             "init_is_file": false,
             "init_file_name": "",
             "overwrite_varname": true,

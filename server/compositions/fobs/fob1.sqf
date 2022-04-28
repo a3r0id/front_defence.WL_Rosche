@@ -1,4 +1,32 @@
-[
+/*
+Grab data:
+Mission: front_defence
+World: WL_Rosche
+Anchor position: [6886.17, 14923.4]
+Area size: 150
+Using orientation of objects: no
+*/
+
+/*
+[[6364.04, 13528.2, 64.74], 150, false] call BIS_fnc_objectsGrabber;
+
+TODO:
+> respawn needs to be renamed to respawn_west in this file
+> vehicle respawn needs to be renamed to vehicle_respawn_west in this file
+> vehicles should be spawned on available CUP_A1_Road_VoidPathXVoidPath's
+> 
+*/
+
+private _things_to_delete = [OTHER_FLAG1, INITIAL_CRATE, OTHER_FLAG, OTHER_TABLE, OTHER_LAPTOP, respawn_west, respawn_vehicle_west];
+
+deleteMarker "fob_marker";
+{
+	deleteVehicle _x;
+} forEach _things_to_delete;
+
+params["_pos"];
+
+_composition = [
     [
         "Land_HBarrierWall6_F",
         [
@@ -1424,22 +1452,6 @@
         false
     ],
     [
-        "Land_ConnectorTent_01_wdl_open_F",
-        [
-            1.70898,
-            -7.3125,
-            -0.985291
-        ],
-        0,
-        1,
-        0,
-        [],
-        "",
-        "this setVariable ['IS_FOB', true, true];this allowDamage false;",
-        true,
-        false
-    ],
-    [
         "Land_Laptop_device_F",
         [
             1.69336,
@@ -1451,9 +1463,9 @@
         0,
         [],
         "FOB_TELEPORTER",
-        "this setVariable ['DESCRIPTION', 'Our FOB teleporter / Command Terminal', true];this setVariable ['IS_FOB', true, true];this allowDamage false;",
+        "[this, true, [0,1,1], 0, true] call ace_dragging_fnc_setCarryable;this setVariable ['DESCRIPTION', 'Our FOB teleporter / Command Terminal', true];this setVariable ['IS_FOB', true, true];this allowDamage false;",
         true,
-        false
+        true
     ],
     [
         "B_supplyCrate_F",
@@ -1468,22 +1480,6 @@
         [],
         "",
         "[this, true] call ace_arsenal_fnc_initBox;this setVariable ['DESCRIPTION', 'Ace Arsenal Crate', true];this setVariable ['IS_FOB', true, true];this allowDamage false;",
-        true,
-        false
-    ],
-    [
-        "Land_PortableDesk_01_olive_F",
-        [
-            1.69287,
-            -7.39648,
-            0
-        ],
-        0,
-        1,
-        0,
-        [],
-        "",
-        "this setVariable ['IS_FOB', true, true];this allowDamage false;",
         true,
         false
     ],
@@ -1743,4 +1739,68 @@
         true,
         false
     ]
-]
+];
+_composition = _composition + [
+    [
+        "ModuleRespawnPosition_F",
+        _pos,
+        0,
+        1,
+        0,
+        [],
+        "respawn_west",
+        "",
+        true,
+        false
+    ],
+    [
+        "ModuleRespawnVehicle_F",
+        _pos,
+        0,
+        1,
+        0,
+        [],
+        "respawn_vehicle_west",
+        "",
+        true,
+        false
+    ]
+];
+
+private _initScript = "";
+{
+
+    // Pop the first available spawn pad from the array of spawnpads
+    private _padPos = [] call fnc_getEmptySpawnPad;
+
+    if (typeName _padPos != "BOOL") then 
+    {
+        systemChat format ["Spawning vehicle %1 on pad: %2", _x, _padPos];
+        _vehicle  = _x createVehicle _padPos;
+        break;
+    } else {
+        private _randomPosOverflow = [getPos respawn_vehicle_west, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+        _vehicle = _x createVehicle _randomPosOverflow;
+        systemChat format ["Spawning vehicle %1 (overflow area): %2", _x, _randomPosOverflow];        
+    };
+
+    // Post-Processing the vic
+    [_vehicle] execVM "server\asset.sqf";
+    // VEHICLES ARE PART OF FOB! 
+    // In order for fob to be moved (deleted & rebuilt) all vehicles will also be deleted and rebuilt.
+    // Good incentive to prevent FOB location spamming by command.
+    _vehicle setVariable ["IS_FOB", true, true];    
+
+} forEach ([profileNameSpace, "SAVED_PURCHASED_VEHICLES", []] call BIS_fnc_getServerVariable);
+
+profileNameSpace setVariable ["SAVED_FOB_LOCATION", [_pos select 0, _pos select 1, _pos select 2]];
+missionNameSpace setVariable ["FOB_LOCATION", [_pos select 0, _pos select 1, _pos select 2], true];
+
+[_pos, 0, _composition, 0] call BIS_fnc_objectsMapper;
+
+private _marker = createMarker ["fob_marker", [_pos select 0, _pos select 1]]; // Not visible yet.
+_marker setMarkerType "hd_flag"; // Visible.
+_marker setMarkerColor "ColorYellow"; // Blue.
+_marker setMarkerText "FOB Alpha"; // Text.
+
+publicVariable "FOB_LOCATION";

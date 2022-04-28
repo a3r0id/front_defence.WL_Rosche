@@ -1,8 +1,10 @@
 
 PURCHASE_MENU_OPEN       = false;
 PURCHASE_MENU_CART_ITEMS = [];
+
 // Schema for assets in purchase menu:
 // [class, name, price, description, init, initscope(remoteexec)?]
+
 BUILD_MENU_BLUFOR 		 = [
 	[
 		"Armor",
@@ -186,7 +188,19 @@ _ctrlButton ctrlAddEventHandler ["ButtonClick",
 
 	if (_price <= CURRENT_FUNDING_BALANCE) then {
 		[_price] call fnc_subtractFunding;
-		private _vehicle = _class createVehicle ([player, 10] call fnc_inFrontOf);
+	
+	    private _padPos   = [] call fnc_getEmptySpawnPad;
+		private _spawnPos = [];
+		if (typeName _padPos != "BOOL") then 
+		{
+			private _dropHeight = [[0, 0, 100], _padPos] call BIS_fnc_vectorAdd;
+			_spawnPos = [_dropHeight, 0, 5, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+			systemChat format["Spawning %1 at parking spot %2", typeOf _vehicle, _spawnPos];
+		} else {
+			_spawnPos = [getPos respawn_vehicle_west, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+			systemChat format["Spawning %1 at overflow spot (random) %2", typeOf _vehicle, _padPos];
+		};
+		private _vehicle = _class createVehicle (_spawnPos);
 		[[_vehicle], "server\asset.sqf"] remoteExec ["execVM", 2];
 		// [_vehicle, _initScript] remoteExec ["setVehicleInit", _initTarget]; // BROKEN! Disabled in ARMA 3!
 		[_vehicle, _initScript] call fnc_addToPurchasedVehicles;

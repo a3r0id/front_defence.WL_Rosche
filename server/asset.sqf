@@ -3,6 +3,7 @@ params["_vehicle", ["_storedInit", ""], ["_storedInitTargets", 0], ["_doesRespaw
 
 // Set networked vehicle data
 _vehicle setVariable ["IS_ASSET",       true, 			 true];
+_vehicle setVariable ["IS_FOB",       true, 			 true];
 _vehicle setVariable ["SPAWN_LOCATION", getPos _vehicle, true];
 _vehicle setVariable ["DOES_RESPAWN",   _doesRespawn,    true];
 

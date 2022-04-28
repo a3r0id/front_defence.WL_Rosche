@@ -37,21 +37,7 @@ if (DEBUG) then {
 _units 			= [];
 
 for "_i" from 1 to _airAmount do {
-	private _randomUnit = selectRandom [
-		"min_rf_ka_52",
-		"RHS_T50_vvs_blueonblue",
-		"rhs_mig29s_vvsc",
-		"rhs_mig29sm_vvsc",
-		"RHS_Su25SM_vvsc",
-		"RHS_Su25SM_CAS_vvsc",
-		"RHS_Su25SM_Cluster_vvsc",
-		"RHS_Su25SM_KH29_vvsc",
-		"CUP_O_Ka50_DL_RU",
-		"RHS_Ka52_vvsc",
-		"min_rf_ka_52",
-		"CUP_O_Mi24_P_Dynamic_RU",
-		"CUP_O_Mi24_V_Dynamic_RU"
-	];
+	private _randomUnit = selectRandom FD_OPFOR_AIR;
 
 	private _randomPos = [[[getPos _trigger, _airRadius]], []] call BIS_fnc_randomPos;
 
@@ -89,19 +75,7 @@ for "_i" from 1 to _airAmount do {
 };
 
 for "_i" from 1 to _vehicleAmount do {
-	private _randomUnit = selectRandom [
-		"rhs_tigr_sts_vmf",
-		"min_rf_gaz_2330_HMG",
-		"CUP_O_UAZ_METIS_RU",
-		"CUP_O_UAZ_AGS30_RU",
-		"CUP_O_UAZ_SPG9_RU",
-		"CUP_O_MTLB_pk_Green_RU",
-		"CUP_O_UAZ_AA_RU",
-		"CUP_O_GAZ_Vodnik_KPVT_RU",
-		"CUP_O_GAZ_Vodnik_BPPU_RU",
-		"CUP_O_GAZ_Vodnik_AGS_RU",
-		"CUP_O_GAZ_Vodnik_PK_RU"
-	];
+	private _randomUnit = selectRandom FD_OPFOR_CAR;
 
 	private _randomPos = [[[getPos _trigger, _vehicleRadius]], []] call BIS_fnc_randomPos;
 
@@ -139,27 +113,7 @@ for "_i" from 1 to _vehicleAmount do {
 };
 
 for "_i" from 1 to _armorAmount do {
-	private _randomUnit = selectRandom [
-		"rhs_Ural_Zu23_VDV_01",
-		"rhs_btr80_vdv",
-		"rhs_btr80a_vv",
-		"rhs_t72be_tv",
-		"rhs_t80um",
-		"rhs_t90sab_tv",
-		"rhs_zsu234_aa",
-		"rhsgref_BRDM2_ATGM_vmf",
-		"rhs_sprut_vdv",
-		"rhs_bmp2k_vmf",
-		"rhs_tigr_sts_vmf",
-		"min_rf_t_15",
-		"rhs_t14_tv",
-		"rhs_t80a",
-		"CUP_O_BRDM2_RUS",
-		"CUP_O_BMP3_RU",
-		"CUP_O_2S6M_RU",
-		"CUP_O_2S6_RU",
-		"min_rf_sa_22"
-	];
+	private _randomUnit = selectRandom FD_OPFOR_ARMOR;
 
 	private _randomPos = [[[getPos _trigger, _armorRadius]], []] call BIS_fnc_randomPos;
 
@@ -196,66 +150,7 @@ for "_i" from 1 to _armorAmount do {
 
 };
 
-OPMERC_infantry_groups = [
-	["weapons_team", [
-		"rhs_vdv_sergeant",
-		"rhs_vdv_machinegunner",
-		"rhs_vdv_machinegunner",
-		"rhs_vdv_machinegunner_assistant",
-		"rhs_vdv_marksman",
-		"rhs_vdv_at",
-		"rhs_vdv_LAT",
-		"rhs_vdv_aa"
-	]],
-	["fire_team", [
-		"rhs_vdv_sergeant",
-		"rhs_vdv_rifleman",
-		"rhs_vdv_rifleman",
-		"rhs_vdv_rifleman",
-		"rhs_vdv_rifleman",			
-		"rhs_vdv_RShG2",
-		"rhs_vdv_RShG2",
-		"rhs_vdv_grenadier_rpg",
-		"rhs_vdv_grenadier_rpg",
-		"rhs_vdv_recon_rifleman_l",
-		"rhs_vdv_medic",
-		"rhs_vdv_medic",
-		"rhs_vdv_arifleman",
-		"rhs_vdv_arifleman",
-		"rhs_vdv_machinegunner_assistant"
-	]],
-	["medical_team", [
-		"rhs_vdv_sergeant",
-		"rhs_vdv_medic",
-		"rhs_vdv_medic",
-		"rhs_vdv_medic"
-	]],
-	["recon_team", [
-		"rhs_vdv_recon_officer",
-		"rhs_vdv_recon_efreitor",
-		"rhs_vdv_recon_arifleman_scout",
-		"rhs_vdv_recon_rifleman_l",
-		"rhs_vdv_recon_rifleman_scout_akm",
-		"rhs_vdv_recon_arifleman_rpk_scout"
-	]],
-	["spetznaz", [
-		"min_rf_spetsnaz_TL",
-		"min_rf_spetsnaz_M",
-		"min_rf_spetsnaz_M",
-		"min_rf_spetsnaz",
-		"min_rf_spetsnaz",
-		"min_rf_spetsnaz",
-		"min_rf_spetsnaz",
-		"min_rf_spetsnaz_O",
-		"min_rf_spetsnaz_O",
-		"min_rf_spetsnaz_O",
-		"min_rf_spetsnaz_O",
-		"min_rf_spetsnaz_GL",
-		"min_rf_spetsnaz_GL",
-		"min_rf_spetsnaz_AR",
-		"min_rf_spetsnaz_AR"
-	]]
-];
+
 
 for "_i" from 1 to _infantryAmount do {
 
@@ -263,7 +158,7 @@ for "_i" from 1 to _infantryAmount do {
 
 	private _generalpos   = [[[getPos _trigger, _infantryRadius]], []] call BIS_fnc_randomPos;
 
-	private _randomGroup  = selectRandom OPMERC_infantry_groups;
+	private _randomGroup  = selectRandom FD_INFANTRY_GROUPS;
 
 	private _opmerc_group_name  = _randomGroup select 0;
 	private _opmerc_group_units = _randomGroup select 1;

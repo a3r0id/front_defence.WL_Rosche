@@ -1,5 +1,15 @@
 RESTART_MISSION_ON_START = false;
 
+call compileFinal preprocessFile "config\opfor_vehicles.sqf";
+call compileFinal preprocessFile "config\opfor_infantry.sqf";
+systemChat "[DEBUG] OPFOR Configuration loaded";
+
+// Fob/fop type
+CURRENT_FOB_TYPE = "fob1.sqf";
+CURRENT_FOP_TYPE = "fop1.sqf";
+publicVariable "CURRENT_FOB_TYPE";
+publicVariable "CURRENT_FOP_TYPE";
+
 GAMETYPES = [
     "pve_as_bf",
     "pve_as_of",
@@ -164,6 +174,7 @@ fnc_addToPurchasedVehicles = {
     private _n = "DEFAULT_INIT_" + (typeOf _vehicle);
 
     private _v = [profileNamespace, _n, _init] call BIS_fnc_getServerVariable;
+    systemChat format["fnc_addToPurchasedVehicles('%1', %2) -> %3", _vehicle, _init, _v];
 
 };
 
@@ -279,21 +290,21 @@ if (RESTART_MISSION) then {
 
     // Build FOB
     if !(savedFobLocation isEqualTo false) then {
-        [savedFobLocation] execVM "server\compositions\fob.sqf";
-        systemChat format["Fob Location: %1", savedFobLocation];
+        [savedFobLocation] execVM "server\compositions\fobs\fob1.sqf";
+        systemChat format["FOB BUILT - Fob Location: %1", savedFobLocation];
     };
 
     // Build FOP
     if !(savedFopLocation isEqualTo false) then {
-        [savedFopLocation] execVM "server\compositions\fop1.sqf";
-        systemChat format["Fop Location: %1", savedFopLocation];
+        [savedFopLocation] execVM "server\compositions\fops\fop1.sqf";
+        systemChat format["FOP BUILT - Fop Location: %1", savedFopLocation];
     };
 
     systemChat "[SERVER] Loaded last save";
 };
 
-missionNamespace setVariable ["BLUFOR_MEAN_POS", [], true];
-missionNamespace setVariable ["OPFOR_MEAN_POS", [], true];
+missionNamespace setVariable ["BLUFOR_MEAN_POS", false, true];
+missionNamespace setVariable ["OPFOR_MEAN_POS", false, true];
 missionNamespace setVariable ["LOCATION_TYPES", ["NameLocal", "NameVillage", "NameCity", "NameCityCapital"], true];
 
 systemChat format["[DEBUG] Server Variables Set"];
@@ -385,8 +396,6 @@ systemChat format["[DEBUG] Server Variables Set"];
         // Get mean of radius'
     private _meanRad = [_radiusInfantry, _radiusVehicles, _radiusAir,  _radiusArmor] call BIS_fnc_geometricMean;
 
-
-
     if (DEBUG) then {
         _marker setMarkerText format ["Name: %1 Type: %2 Radius: %3", _name, _type, _meanRad];  // Debug
     };
@@ -447,14 +456,14 @@ systemChat format["[DEBUG] Dynamic Sectors Established"];
 
 // Start Front-Defence Mode
 [] spawn {
-    [] execVM "server\front.sqf";
+    execVM "server\front.sqf";
 };
 systemChat format["[DEBUG] Front-Defence Mode Started"];
 
 // Start Civilian/Spawn Manager Loop
 [] spawn {
     while {true} do {
-        [] execVM "server\civilians.sqf";
+        execVM "server\civilians.sqf";
         {
             // All non-blufor motorists
             if ((side _x != WEST) && !(isNull objectParent _x)) then {
@@ -481,3 +490,12 @@ systemChat format["[DEBUG] Civilian/Spawn Manager Started"];
     };
 };
 systemChat format["[DEBUG] Zeus auto-add to curator loop Started"];
+
+[] spawn 
+{
+    while {true} do {
+        sleep (selectRandom[300, 600, 900, 1200]);
+        [getArray (configfile >> "CfgWorlds" >> worldName >> "centerPosition")] execVM "server\attacks.sqf";
+        systemChat format["[DEBUG] Attack Spawned!"];
+    };
+};
