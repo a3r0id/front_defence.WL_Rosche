@@ -123,46 +123,55 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 
 		};
 
-/*
+
 		// These guys are like linebackers, they are coming from the outside and sweep into the front.
 		{
 			// Redundant checks - hotfix :(
 			if !(side _x isEqualTo east) then {continue};
 
-			// If OPFOR unit (not in vehicle) is outside the calculated front, direct them towards the calculated front.
-			deleteWaypoint [_x, (currentWaypoint _x)]; // Replace the current waypoint
-			private _group = _x;
+			// !([_x] call fnc_groupHasVehicle)
+
+			// If far from front then move to frontoline.
+			if (([_x] call fnc_groupMedianPosition) distance _front > _ofdistance * 2) then 
 			{
-				deleteWaypoint _x;
-			} forEach (waypoints _group);
+				// If OPFOR unit (not in vehicle) is outside the calculated front, direct them towards the calculated front.
+				deleteWaypoint [_x, (currentWaypoint _x)]; // Replace the current waypoint
+				private _group = _x;
+				{
+					deleteWaypoint _x;
+				} forEach (waypoints _group);
 
-			private _rnpos = [_front, _ofdistance] call fnc_randPosSafe;
+				private _rnpos = [_front, _ofdistance] call fnc_randPosSafe;
 
-			private _general_fronts_radians = [_ofdistance, _bfdistance] call BIS_fnc_arithmeticMean;
+				private _general_fronts_radians = [_ofdistance, _bfdistance] call BIS_fnc_arithmeticMean;
 
-			private _wp = _x addWaypoint [_rnpos, _general_fronts_radians / 2, (currentWaypoint _x) + 1, "move_to_front"];
+				private _wp = _x addWaypoint [_rnpos, _general_fronts_radians / 2, (currentWaypoint _x) + 1, "move_to_front"];
 
-			_wp setWaypointBehaviour "COMBAT";
-			_wp setWaypointCombatMode "RED";
-			_wp setWaypointFormation "NO CHANGE";
-			_wp setWaypointSpeed "FULL";
-			_wp setWaypointTimeout [120, 300, 600];
-			_wp setWaypointType "SAD";
-			_wp setWaypointLoiterRadius _general_fronts_radians;
-			_wp setWaypointLoiterType "CIRCLE_L";		
+				_wp setWaypointBehaviour "COMBAT";
+				_wp setWaypointCombatMode "RED";
+				_wp setWaypointFormation "NO CHANGE";
+				_wp setWaypointSpeed "FULL";
+				_wp setWaypointTimeout [120, 300, 600];
+				_wp setWaypointType "SAD";
+				_wp setWaypointLoiterRadius _general_fronts_radians;
+				_wp setWaypointLoiterType "CIRCLE_L";		
 
-			//systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
+				systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
 
-			// is: opfor/alive/not in vehicle/outside respective front.
+			} else { // If inside the calculated front, task defend the frontlines.
+				if (selectRandom[true, false, false, false]) then {
+					[_group, _front] call bis_fnc_taskDefend;
+					systemChat format["%1 is defending the frontlines.", _x];
+				};
+			};
+
+			// is: opfor/alive/not ignored or managed.
 		} forEach allGroups findif {
 			({ alive _x } count units _x > 0 ) 
 			&& (side (leader _x) isEqualTo east) 
-			&& (([_x] call fnc_groupMedianPosition) distance _front > _ofdistance * 2) 
-			&& !([_x] call fnc_groupHasVehicle)
 			&& !([_x] call fnc_shouldIgnoreGroupByVehicleIndication)
 			&& (_x getVariable["IS_MANAGED", false] == false)
 		};
-*/
 	};
 	sleep 10;
 };

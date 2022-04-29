@@ -163,21 +163,6 @@ fnc_randPosSafe = {
     _sp
 };
 
-fnc_addToPurchasedVehicles = {
-    // Adds a vehicle to the persistant list of purchased vehicles. Does nothing for the current spawned vehicle.
-    params["_vehicle", "_init"];
-    private _v = [profileNamespace, "SAVED_PURCHASED_VEHICLES", []] call BIS_fnc_getServerVariable;
-    _v pushBack (typeOf _vehicle);
-    [profileNamespace, "SAVED_PURCHASED_VEHICLES", _v] call BIS_fnc_setServerVariable;
-
-    // Set a default init script for the vehicle type.
-    private _n = "DEFAULT_INIT_" + (typeOf _vehicle);
-
-    private _v = [profileNamespace, _n, _init] call BIS_fnc_getServerVariable;
-    systemChat format["fnc_addToPurchasedVehicles('%1', %2) -> %3", _vehicle, _init, _v];
-
-};
-
 fnc_groupHasVehicle = {
     params["_group"];
     {
@@ -221,26 +206,46 @@ fnc_server_setVar = {
     missionNameSpace setVariable [_var, _value, true];
 };
 
+fnc_addToPurchasedVehicles = { // Takes vehicle object OR string(className)
+    // Adds a vehicle to the persistant list of purchased vehicles. Does nothing for the current spawned vehicle.
+    params["_vehicle"];
+    if (typeName _vehicle != "STRING") then {
+        _vehicle = typeOf _vehicle;
+    };
+    profileNamespace setVariable ["SAVED_PURCHASED_VEHICLES", (profileNamespace getVariable ["SAVED_PURCHASED_VEHICLES", []]) + [_vehicle]];
+    systemChat format["[DEBUG] Purchased Vehicles: %1", [] call fnc_getPurchasedVehicles];
+};
+
+fnc_getPurchasedVehicles = {
+    // Returns the list of purchased vehicles.
+    profileNamespace getVariable ["SAVED_PURCHASED_VEHICLES", []]
+};
+
+fnc_setPurchasedVehicles = {
+    params["_vehicles"];
+    // Returns the list of purchased vehicles.
+    profileNamespace setVariable ["SAVED_PURCHASED_VEHICLES", _vehicles];
+};
+
 // End Server Utility Functions
 
 // Set Server Variables
-missionNamespace setVariable ["RESTART_MISSION",      RESTART_MISSION_ON_START, true];
-missionNamespace setVariable ["FUNDING_START_BALANCE",      100000000, true];
-missionNamespace setVariable ["DEBUG",      false, true];
-missionNamespace setVariable ["GAME_TYPE",  0, true];
-missionNamespace setVariable ["MAX_ACTIVE_SECTORS",  2, true];
-missionNamespace setVariable ["PLAYER_SIDE", west, true];// west, east, independent, civilian, resistance, "pvp" = pvp any (GAME_TYPE[2])
-missionNamespace setVariable ["MAX_PEDESTRIANS",  8, true];
-missionNamespace setVariable ["MAX_MOTORISTS",  8, true];
-missionNamespace setVariable ['MAP_CENTER', [] call fnc_getMapCenter,    true];
-missionNamespace setVariable ['MAP_RADIUS', [] call fnc_getMapRadius,    true];
-missionNamespace setVariable ['LOCATIONS',  [] call fnc_getAllLocations, true];
-missionNamespace setVariable ["IS_FRONT_DEFENCE", true];
-missionNamespace setVariable ["ACTIVE_SECTORS", [], true];
+missionNamespace setVariable ["RESTART_MISSION",            RESTART_MISSION_ON_START,    true];
+missionNamespace setVariable ["FUNDING_START_BALANCE",      100000000,                   true];
+missionNamespace setVariable ["BLUFOR_ACTIVATION_COUNT",    3,                           true]; // Amount of BLUFOR units needed to activate sector.
+missionNamespace setVariable ["DEBUG",                      true,                        true];
+missionNamespace setVariable ["GAME_TYPE",                  0,                           true];
+missionNamespace setVariable ["MAX_ACTIVE_SECTORS",         2,                           true];
+missionNamespace setVariable ["PLAYER_SIDE",                west,                        true];// west, east, independent, civilian, resistance, "pvp" = pvp any (GAME_TYPE[2])
+missionNamespace setVariable ["MAX_PEDESTRIANS",            8,                           true];
+missionNamespace setVariable ["MAX_MOTORISTS",              8,                           true];
+missionNamespace setVariable ['MAP_CENTER',                 [] call fnc_getMapCenter,    true];
+missionNamespace setVariable ['MAP_RADIUS',                 [] call fnc_getMapRadius,    true];
+missionNamespace setVariable ['LOCATIONS',                  [] call fnc_getAllLocations, true];
+missionNamespace setVariable ["ACTIVE_SECTORS",             [],                          true];
+missionNamespace setVariable ["IS_FRONT_DEFENCE",           true];
 
 savedCaptures          = profileNamespace getVariable ["SAVED_CAPTURED_SECTORS", []];
-
-savedPurchasedVehicles = profileNamespace getVariable ["SAVED_PURCHASED_VEHICLES", []];
 
 savedFobLocation       = profileNamespace getVariable ["SAVED_FOB_LOCATION", false];
 
@@ -259,10 +264,6 @@ if (RESTART_MISSION) then {
     missionNamespace setVariable ["CURRENT_FUNDING_BALANCE",   FUNDING_START_BALANCE, true]; 
     profileNamespace setVariable ["SAVED_FUNDING_BALANCE",   FUNDING_START_BALANCE];   
 
-    // Set purchased vehicles empty
-    missionNamespace setVariable ["PURCHASED_VEHICLES", [], true];
-    profileNamespace setVariable ["SAVED_PURCHASED_VEHICLES", []];
-
     // Set Fob/Fop locations
     missionNamespace setVariable ["FOB_LOCATION", false, true];
     missionNamespace setVariable ["FOP_LOCATION", false, true];
@@ -280,9 +281,6 @@ if (RESTART_MISSION) then {
 
     // Saved funding balance
     missionNamespace setVariable ["CURRENT_FUNDING_BALANCE", savedFunding, true];
-
-    // Saved purchased vehicles
-    missionNamespace setVariable ["PURCHASED_VEHICLES", savedPurchasedVehicles, true];   
 
     // Set Fob/Fop locations
     missionNamespace setVariable ["FOB_LOCATION", savedFobLocation, true];
@@ -307,7 +305,21 @@ missionNamespace setVariable ["BLUFOR_MEAN_POS", false, true];
 missionNamespace setVariable ["OPFOR_MEAN_POS", false, true];
 missionNamespace setVariable ["LOCATION_TYPES", ["NameLocal", "NameVillage", "NameCity", "NameCityCapital"], true];
 
-systemChat format["[DEBUG] Server Variables Set"];
+systemChat format["[SERVER] Server Variables Set"];
+
+
+FD_fnc_bluforPopInTriggerArea = {
+    params["_trigger"];
+    private _bfcount = 0;
+    {
+        if (side _x == west) then {
+            if (_x inArea _trigger) then {
+                _bfcount = _bfcount + 1;
+            };            
+        };
+    } forEach allUnits;
+    _bfcount
+};
 
 // Establish Sectors
 {
@@ -393,7 +405,7 @@ systemChat format["[DEBUG] Server Variables Set"];
         default { };
     };
 
-        // Get mean of radius'
+    // Get mean of radius'
     private _meanRad = [_radiusInfantry, _radiusVehicles, _radiusAir,  _radiusArmor] call BIS_fnc_geometricMean;
 
     if (DEBUG) then {
@@ -413,16 +425,14 @@ systemChat format["[DEBUG] Server Variables Set"];
         _trigger setTriggerArea [_meanRad, _meanRad, 0, false];
         _trigger setTriggerActivation ["WEST", "PRESENT", true];
         _trigger setTriggerStatements [
-            "this && (MAX_ACTIVE_SECTORS > count(ACTIVE_SECTORS)) && !(([thisTrigger] call fnc_triggerToLocationId) in ACTIVE_SECTORS)",
+            "this && (([thisTrigger] call FD_fnc_bluforPopInTriggerArea) >= BLUFOR_ACTIVATION_COUNT) && (MAX_ACTIVE_SECTORS > count(ACTIVE_SECTORS)) && !(([thisTrigger] call fnc_triggerToLocationId) in ACTIVE_SECTORS)",
             "
-            systemChat 'Proxed';
             [thisTrigger] spawn {
                 params['_trigger'];
                 [_trigger] execVM 'server\spawner.sqf';
             };
-            systemChat 'here...';
             ",
-            "hint 'Blufor trigger: Deactivated'"
+            ""
             ];
         // Stash location ID into the trigger's variables
         _trigger setVariable ["LOCATION_ID", _uid, true];
@@ -452,13 +462,13 @@ systemChat format["[DEBUG] Server Variables Set"];
 
 } forEach LOCATIONS; 
 
-systemChat format["[DEBUG] Dynamic Sectors Established"];
+systemChat format["[SERVER] Dynamic Sectors Established"];
 
 // Start Front-Defence Mode
 [] spawn {
     execVM "server\front.sqf";
 };
-systemChat format["[DEBUG] Front-Defence Mode Started"];
+systemChat format["[SERVER] Front-Defence Mode Started"];
 
 // Start Civilian/Spawn Manager Loop
 [] spawn {
@@ -474,7 +484,7 @@ systemChat format["[DEBUG] Front-Defence Mode Started"];
         sleep 30;
     };
 };
-systemChat format["[DEBUG] Civilian/Spawn Manager Started"];
+systemChat format["[SERVER] Civilian/Spawn Manager Started"];
 
 // Zeus auto-add to curator loop
 [] spawn
@@ -489,13 +499,13 @@ systemChat format["[DEBUG] Civilian/Spawn Manager Started"];
         } forEach allCurators; // now repeat the instructions for each Curator.
     };
 };
-systemChat format["[DEBUG] Zeus auto-add to curator loop Started"];
+systemChat format["[SERVER] Zeus auto-add to curator loop Started"];
 
 [] spawn 
 {
     while {true} do {
         sleep (selectRandom[300, 600, 900, 1200]);
-        [getArray (configfile >> "CfgWorlds" >> worldName >> "centerPosition")] execVM "server\attacks.sqf";
+        [getArray (configfile >> "CfgWorlds" >> worldName >> "centerPosition")] execVM "server\attacks.sqf"; // Todo: make it random pos instead
         systemChat format["[DEBUG] Attack Spawned!"];
     };
 };

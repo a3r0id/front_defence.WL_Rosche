@@ -1,4 +1,3 @@
-
 PURCHASE_MENU_OPEN       = false;
 PURCHASE_MENU_CART_ITEMS = [];
 
@@ -193,17 +192,26 @@ _ctrlButton ctrlAddEventHandler ["ButtonClick",
 		private _spawnPos = [];
 		if (typeName _padPos != "BOOL") then 
 		{
-			private _dropHeight = [[0, 0, 100], _padPos] call BIS_fnc_vectorAdd;
-			_spawnPos = [_dropHeight, 0, 5, 3, 0, 20, 0] call BIS_fnc_findSafePos;
-			systemChat format["Spawning %1 at parking spot %2", typeOf _vehicle, _spawnPos];
+			//private _dropHeight = [[0, 0, 100], _padPos] call BIS_fnc_vectorAdd;
+			//_spawnPos = [_dropHeight, 0, 5, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+			_spawnPos = _padPos;
+			systemChat format["Spawning %1 at parking spot %2", typeOf _vehicle, _padPos];
 		} else {
 			_spawnPos = [getPos respawn_vehicle_west, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
 			systemChat format["Spawning %1 at overflow spot (random) %2", typeOf _vehicle, _padPos];
 		};
-		private _vehicle = _class createVehicle (_spawnPos);
-		[[_vehicle], "server\asset.sqf"] remoteExec ["execVM", 2];
-		// [_vehicle, _initScript] remoteExec ["setVehicleInit", _initTarget]; // BROKEN! Disabled in ARMA 3!
-		[_vehicle, _initScript] call fnc_addToPurchasedVehicles;
+		
+		private _vehicle = createVehicle [_class, _spawnPos, [], 0, "NONE"];
+		
+		_vehicle allowDamage false;
+		[_vehicle] spawn {
+			sleep 1;
+			(_this select 0) allowDamage true;
+		};
+
+		[[_vehicle], "server\asset.sqf"] remoteExec ["execVM", 2]; // process as an asset
+		//_vehicle setVehicleInit _initScript; // Set init script - networked - DISABLED IN A3 FOR SECURITY REASONS!
+		[_vehicle, _initScript] remoteExec ["fnc_addToPurchasedVehicles", 2]; // Add to purchased vehicles - Server
 		hint format["Remaining Balance: %1", [CURRENT_FUNDING_BALANCE, true] call fnc_standardNumericalNotationString];
 	} else {
 		hint format["Insufficient Funds To Purchase %1!", _name];

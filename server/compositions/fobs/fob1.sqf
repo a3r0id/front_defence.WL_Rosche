@@ -26,6 +26,8 @@ deleteMarker "fob_marker";
 
 params["_pos"];
 
+//////// Start Composition ////////////////////////////////////////////////////////
+
 _composition = [
     [
         "Land_HBarrierWall6_F",
@@ -1740,6 +1742,7 @@ _composition = [
         false
     ]
 ];
+
 _composition = _composition + [
     [
         "ModuleRespawnPosition_F",
@@ -1767,31 +1770,33 @@ _composition = _composition + [
     ]
 ];
 
-private _initScript = "";
-{
+//////// End Composition ////////////////////////////////////////////////////////
 
-    // Pop the first available spawn pad from the array of spawnpads
-    private _padPos = [] call fnc_getEmptySpawnPad;
 
-    if (typeName _padPos != "BOOL") then 
+fnc_hasObstruction = {
+	params["_pos", ["_radius", 1]]; // Default Radius: 1 meter
+	_hasObstruction = false;
+	private _nearbyObjects = nearestObjects [_pos, [], _radius];
+	systemChat format ["NEARBY OBSTRUCTIONS: %1", _nearbyObjects];
+	if ((count _nearbyObjects) > 1 ) then {
+		_hasObstruction = true;
+	};
+	_hasObstruction
+};
+
+fnc_getEmptySpawnPad = {
+    private _padPos     = false;
     {
-        systemChat format ["Spawning vehicle %1 on pad: %2", _x, _padPos];
-        _vehicle  = _x createVehicle _padPos;
-        break;
-    } else {
-        private _randomPosOverflow = [getPos respawn_vehicle_west, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
-        _vehicle = _x createVehicle _randomPosOverflow;
-        systemChat format ["Spawning vehicle %1 (overflow area): %2", _x, _randomPosOverflow];        
-    };
-
-    // Post-Processing the vic
-    [_vehicle] execVM "server\asset.sqf";
-    // VEHICLES ARE PART OF FOB! 
-    // In order for fob to be moved (deleted & rebuilt) all vehicles will also be deleted and rebuilt.
-    // Good incentive to prevent FOB location spamming by command.
-    _vehicle setVariable ["IS_FOB", true, true];    
-
-} forEach ([profileNameSpace, "SAVED_PURCHASED_VEHICLES", []] call BIS_fnc_getServerVariable);
+        if (typeOf _x isEqualTo "CUP_A1_Road_VoidPathXVoidPath") then {
+			systemChat format ["Obstructed: %1", [getPos _x, 5] call fnc_hasObstruction];
+            if !([getPos _x, 5] call fnc_hasObstruction) then {
+                _padPos = getPos _x;
+                break;
+            };
+        };
+    } forEach allMissionObjects "";
+    _padPos
+};
 
 profileNameSpace setVariable ["SAVED_FOB_LOCATION", [_pos select 0, _pos select 1, _pos select 2]];
 missionNameSpace setVariable ["FOB_LOCATION", [_pos select 0, _pos select 1, _pos select 2], true];
@@ -1804,3 +1809,41 @@ _marker setMarkerColor "ColorYellow"; // Blue.
 _marker setMarkerText "FOB Alpha"; // Text.
 
 publicVariable "FOB_LOCATION";
+
+
+// Hotfix for cleaning out nullobjs
+_vehClean = [];
+_vehicles = [] call fnc_getPurchasedVehicles;
+{
+    if (typeName _x == "STRING") then {
+        _vehClean pushBack _x;
+    };
+} forEach _vehicles;
+[_vehClean] call fnc_setPurchasedVehicles;
+
+// Spawn Purchased Vehicles
+private _initScript = "";
+{
+    // Pop the first available spawn pad from the array of spawnpads
+    private _padPos = [] call fnc_getEmptySpawnPad;
+    private _randomPosOverflow = [FOB_LOCATION, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+    private _finalPos = [];
+
+    if (typeName _padPos != "BOOL") then 
+    {
+        _finalPos = _padPos;
+        systemChat format ["Spawning vehicle %1 on pad: %2", _x, _padPos];
+    } else {
+        _finalPos = _randomPosOverflow;
+        systemChat format ["Spawning vehicle %1 (overflow area): %2", _x, _randomPosOverflow];        
+    };
+
+    _vehicle  = _x createVehicle _finalPos;
+
+    // Post-Processing the vic
+    // VEHICLES ARE PART OF FOB! 
+    // In order for fob to be moved (deleted & rebuilt) all vehicles will also be deleted and rebuilt.
+    // Good incentive to prevent FOB location-change spamming by HQ.  
+    [_vehicle] execVM "server\asset.sqf";
+
+} forEach ([] call fnc_getPurchasedVehicles);

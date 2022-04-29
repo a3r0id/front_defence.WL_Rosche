@@ -3,7 +3,7 @@ params["_vehicle", ["_storedInit", ""], ["_storedInitTargets", 0], ["_doesRespaw
 
 // Set networked vehicle data
 _vehicle setVariable ["IS_ASSET",       true, 			 true];
-_vehicle setVariable ["IS_FOB",       true, 			 true];
+_vehicle setVariable ["IS_FOB",         true, 			 true];
 _vehicle setVariable ["SPAWN_LOCATION", getPos _vehicle, true];
 _vehicle setVariable ["DOES_RESPAWN",   _doesRespawn,    true];
 
@@ -22,5 +22,11 @@ if (_unlimitedAmmo) then {
 	[_vehicle, ["Fired", {(_this select 0) setVehicleAmmo 1}]] remoteExec ["addEventHandler", 0];
 };
 
+// Add to all curators
+{
+	_x addCuratorEditableObjects [[_vehicle], false]
+} count allCurators;
+
+systemChat format ["[SERVER] %1 processed as an asset. (server\asset.sqf)", typeOf _vehicle];
 
 

@@ -1,0 +1,1 @@
+FD_BF_START_VEHICLES = [];

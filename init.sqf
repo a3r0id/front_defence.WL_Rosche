@@ -96,7 +96,7 @@ fnc_randPos = {
 fnc_getFopLocation = {
 	/// returns location or false
 	private _fop = missionNamespace getVariable ["FOP_LOCATION", false];
-	systemChat format ["GOT FOP LOCATION: %1", _fop];
+	systemChat format ["[CLIENT] GOT FOP LOCATION: %1", _fop];
 	if ((typeName _fop) != "ARRAY") then {
 		_fop = false;
 	};
@@ -114,7 +114,7 @@ fnc_setFopLocation = {
 fnc_getFobLocation = {
 	/// returns location or false
 	private _fob = missionNamespace getVariable ["FOB_LOCATION", false];
-	systemChat format ["GOT FOB LOCATION: %1", typeName _fob];
+	systemChat format ["[CLIENT] GOT FOB LOCATION: %1", _fob];
 		if ((typeName _fob) != "ARRAY") then {
 		_fob = false;
 	};
@@ -181,6 +181,33 @@ fnc_getEmptySpawnPad = {
         };
     } forEach allMissionObjects "";
     _padPos
+};
+
+fnc_saveGet_Server = {
+	// Get Variable or false - persistant - server
+	params["_var"];
+	profileNamespace getVariable [_var, false]
+};
+
+fnc_saveSet_Server = {
+	// Set persistant variable - server
+	params["_var", "_value", ["_is_public", true]];
+	profileNamespace setVariable [_var, _value, _is_public];
+};
+
+fnc_saveGet_Client = {
+	// Get Variable or false - persistant - client
+	params["_var"];
+	[profileNamespace, _var, false] spawn BIS_fnc_getServerVariable
+};
+
+fnc_saveSet_Client = {
+	// Set persistant variable - client
+	params["_var", "_value", ["_is_public", true]];
+	[profileNamespace, _var, _value] spawn BIS_fnc_setServerVariable;
+	if (_is_public) then {
+		publicVariable _var;
+	};
 };
 
 // CONFIG, FOR NOW...
