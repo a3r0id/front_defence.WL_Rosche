@@ -1,6 +1,6 @@
 # Mission Editor Prerequisites:
 
-- Create Initial Respawn Point - IE: `respawn_west`. [Respawn](https://community.bistudio.com/wiki/Arma_3:_Respawn)
+- Create Initial [Respawn](https://community.bistudio.com/wiki/Arma_3:_Respawn) Point - `respawn_west` - Temporary*. 
 
 - Create Zeus Gamemaster module - #adminLogged.
 
