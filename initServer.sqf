@@ -1,4 +1,4 @@
-RESTART_MISSION_ON_START = false;
+RESTART_MISSION_ON_START = true;
 
 call compileFinal preprocessFile "config\opfor_vehicles.sqf";
 call compileFinal preprocessFile "config\opfor_infantry.sqf";
@@ -233,7 +233,7 @@ fnc_setPurchasedVehicles = {
 missionNamespace setVariable ["RESTART_MISSION",            RESTART_MISSION_ON_START,    true];
 missionNamespace setVariable ["FUNDING_START_BALANCE",      100000000,                   true];
 missionNamespace setVariable ["BLUFOR_ACTIVATION_COUNT",    3,                           true]; // Amount of BLUFOR units needed to activate sector.
-missionNamespace setVariable ["DEBUG",                      true,                        true];
+missionNamespace setVariable ["DEBUG",                      false,                       true];
 missionNamespace setVariable ["GAME_TYPE",                  0,                           true];
 missionNamespace setVariable ["MAX_ACTIVE_SECTORS",         2,                           true];
 missionNamespace setVariable ["PLAYER_SIDE",                west,                        true];// west, east, independent, civilian, resistance, "pvp" = pvp any (GAME_TYPE[2])

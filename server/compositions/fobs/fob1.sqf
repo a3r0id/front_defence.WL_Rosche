@@ -1826,7 +1826,7 @@ private _initScript = "";
 {
     // Pop the first available spawn pad from the array of spawnpads
     private _padPos = [] call fnc_getEmptySpawnPad;
-    private _randomPosOverflow = [FOB_LOCATION, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+    private _randomPosOverflow = [FOB_LOCATION, 1, 100, 5, 0, 20, 0] call BIS_fnc_findSafePos;
     private _finalPos = [];
 
     if (typeName _padPos != "BOOL") then 

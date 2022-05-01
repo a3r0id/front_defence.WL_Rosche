@@ -28,9 +28,13 @@ private _marker = ["marker_", _locationUID] call fnc_nameToUID; // Get Marker na
 // Set Sector active
 _sectors = missionNamespace getVariable ["ACTIVE_SECTORS", []];
 missionNamespace setVariable ["ACTIVE_SECTORS", _sectors + [_locationUID], true];
+_sectors = missionNamespace getVariable ["ACTIVE_SECTORS", []];
 
 if (DEBUG) then {
-	systemChat format ["%1 - %2 is proxed - Active Sectors: ", _poiName, _locationType, count ACTIVE_SECTORS];
+	systemChat format ["[SERVER] %1 - %2 is proxed - Active Sectors: ", _locationType, _poiName];
+	{
+		systemChat format ["%1", _x];
+	} forEach  _sectors;
 };
 
 // All units spawned at point of interest.
@@ -149,8 +153,6 @@ for "_i" from 1 to _armorAmount do {
 	_crew enableAttack true;
 
 };
-
-
 
 for "_i" from 1 to _infantryAmount do {
 

@@ -160,7 +160,7 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 
 			} else { // If inside the calculated front, task defend the frontlines.
 				if (selectRandom[true, false, false, false]) then {
-					[_group, _front] call bis_fnc_taskDefend;
+					[_x, _front] call bis_fnc_taskDefend;
 					systemChat format["%1 is defending the frontlines.", _x];
 				};
 			};

@@ -197,7 +197,7 @@ _ctrlButton ctrlAddEventHandler ["ButtonClick",
 			_spawnPos = _padPos;
 			systemChat format["Spawning %1 at parking spot %2", typeOf _vehicle, _padPos];
 		} else {
-			_spawnPos = [getPos respawn_vehicle_west, 10, 100, 3, 0, 20, 0] call BIS_fnc_findSafePos;
+			_spawnPos = [getPos respawn_vehicle_west, 1, 100, 5, 0, 20, 0] call BIS_fnc_findSafePos;
 			systemChat format["Spawning %1 at overflow spot (random) %2", typeOf _vehicle, _padPos];
 		};
 		
