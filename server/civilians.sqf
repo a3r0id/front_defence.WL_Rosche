@@ -1,4 +1,4 @@
-// Get median pos of blufor and spawn civis, if any civi is far away from the median, spawn a new one or move civi closer to the median
+// Get mean pos of blufor and spawn civis, if any civi is far away from the mean, spawn a new one or move civi closer to the Mean
 _front = missionNamespace getVariable ["FRONT_POS", []];
 _bf_distance = missionNamespace getVariable ["BLUFOR_DISTANCE", 500];
 

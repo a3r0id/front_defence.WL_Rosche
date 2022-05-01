@@ -171,7 +171,7 @@ fnc_groupHasVehicle = {
     false
 };
 
-fnc_groupMedianPosition = {
+fnc_groupMeanPosition = {
     params["_group"];
     private _px = []; private _py = []; private _pz = [];
     {

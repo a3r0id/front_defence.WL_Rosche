@@ -132,8 +132,8 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 			// !([_x] call fnc_groupHasVehicle)
 
 			// If far from front then move to frontline.
-			_groupMedianPos = [_x] call fnc_groupMedianPosition;
-			_gmposP = [_groupMedianPos select 0, _groupMedianPos select 1, 0];
+			_groupMeanPos = [_x] call fnc_groupMeanPosition;
+			_gmposP = [_groupMeanPos select 0, _groupMeanPos select 1, 0];
 			_frposP = [_front select 0, _front select 1, 0];
 			
 			if ( (_gmposP distance2D _frposP) > _ofdistance) then {
