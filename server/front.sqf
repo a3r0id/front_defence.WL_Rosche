@@ -131,8 +131,8 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 
 			// !([_x] call fnc_groupHasVehicle)
 
-			// If far from front then move to frontoline.
-			if (([_x] call fnc_groupMedianPosition) distance _front > _ofdistance * 2) then 
+			// If far from front then move to frontline.
+			if ( ([_x] call fnc_groupMedianPosition) distance _front) > _ofdistance * 2) then 
 			{
 				// If OPFOR unit (not in vehicle) is outside the calculated front, direct them towards the calculated front.
 				deleteWaypoint [_x, (currentWaypoint _x)]; // Replace the current waypoint
