@@ -7,7 +7,7 @@ if (count _front < 1) exitWith {
 };
 
 
-opmerc_civilians = [
+FD_civilians = [
 	"RDS_Worker4",
 	"RDS_Citizen1",
 	"RDS_Citizen_Random",
@@ -20,7 +20,7 @@ opmerc_civilians = [
 	"RDS_PL_Policeman"
 ];
 
-opmerc_civilian_vehicles = [
+FD_civilian_vehicles = [
 	"RDS_PL_Van_01_box_f", //     Box Van
 	"RDS_PL_Golf4_Civ_01", //     Golf
 	"RDS_PL_Hatchback_01_F", //   Hatchback
@@ -34,7 +34,7 @@ opmerc_civilian_vehicles = [
 	"RDS_PL_MMT_Civ_01"     //    Mountain Bike
 ];
 
-opmerc_pedestrians = [
+FD_pedestrians = [
 	"RDS_Citizen1",
 	"RDS_Citizen_Random",
 	"C_man_polo_3_F_asia",
@@ -45,13 +45,13 @@ opmerc_pedestrians = [
 	"RDS_PL_Policeman"
 ];
 
-opmerc_traffic_men = [
+FD_traffic_men = [
 	"RDS_Citizen1",
 	"C_man_polo_3_F_asia",
 	"ZEPHIK_Female_Civ_15" // Black Joggers - F
 ];
 
-opmerc_traffic_configurations = [
+FD_traffic_configurations = [
 	// General Population
 	[
 		[
@@ -63,7 +63,7 @@ opmerc_traffic_configurations = [
 			"RDS_PL_Lada_Civ_01",   //    Old
 			"RDS_PL_MMT_Civ_01"     //    Mountain Bike	
 		],
-		opmerc_traffic_men
+		FD_traffic_men
 	],
 	// Police unit
 	[
@@ -106,7 +106,7 @@ if (_pedPop < MAX_PEDESTRIANS) then {
 	for "_i" from 1 to _allowedspawns do {
 		private _group = createGroup civilian;
 		_group deleteGroupWhenEmpty true;
-		private _pedestrian = _group createUnit [selectRandom opmerc_pedestrians, [_front, _pedradius] call fnc_randPosSafe, [], 0, "NONE"];
+		private _pedestrian = _group createUnit [selectRandom FD_pedestrians, [_front, _pedradius] call fnc_randPosSafe, [], 0, "NONE"];
 		[_group, getPos _pedestrian, _pedradius] call BIS_fnc_taskPatrol;
 	};
 	systemChat format ["%1 civilians spawned", _allowedspawns];
@@ -120,7 +120,7 @@ if (_motoristsPop < MAX_MOTORISTS) then {
 	for "_i" from 1 to _allowedspawns do {
 		private _group      	   = createGroup civilian;
 		_group deleteGroupWhenEmpty true;
-		private _randomComposition = selectRandom opmerc_traffic_configurations;
+		private _randomComposition = selectRandom FD_traffic_configurations;
 
 		private _d 	     = selectRandom (_randomComposition select 1);
 		private _c       = selectRandom (_randomComposition select 0);

@@ -162,8 +162,8 @@ for "_i" from 1 to _infantryAmount do {
 
 	private _randomGroup  = selectRandom FD_INFANTRY_GROUPS;
 
-	private _opmerc_group_name  = _randomGroup select 0;
-	private _opmerc_group_units = _randomGroup select 1;
+	private _FD_group_name  = _randomGroup select 0;
+	private _FD_group_units = _randomGroup select 1;
 
 	{
 		private _safepos   = [_generalpos, 1, 20, 2, 0, 25, 0, [], []] call BIS_fnc_findSafePos;
@@ -184,8 +184,8 @@ for "_i" from 1 to _infantryAmount do {
 		// Add infantry to _units[]
 		_units pushBack _thisUnit;
 
-		//systemChat format ["%1: %2", _thisUnit, _opmerc_group_name];
-	} forEach _opmerc_group_units;
+		//systemChat format ["%1: %2", _thisUnit, _FD_group_name];
+	} forEach _FD_group_units;
 
 	_group deleteGroupWhenEmpty true;
 	_group setBehaviour "CBT";	// CBT = Combat Behaviour
@@ -200,7 +200,7 @@ for "_i" from 1 to _infantryAmount do {
 	// Patrol the radius
 	[_group, getPos _trigger, _infantryRadius] call BIS_fnc_taskPatrol;
 
-	//systemChat format ["Spawned Group: %1", _opmerc_group_name];	
+	//systemChat format ["Spawned Group: %1", _FD_group_name];	
 
 };
 
