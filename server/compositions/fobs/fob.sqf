@@ -16,6 +16,7 @@ TODO:
 > vehicles should be spawned on available CUP_A1_Road_VoidPathXVoidPath's
 > 
 */
+COMMANDER_TERMINAL = "Land_Laptop_device_F";
 
 private _things_to_delete = [OTHER_FLAG1, INITIAL_CRATE, OTHER_FLAG, OTHER_TABLE, OTHER_LAPTOP, respawn_west, respawn_vehicle_west];
 
@@ -23,6 +24,13 @@ deleteMarker "fob_marker";
 {
 	deleteVehicle _x;
 } forEach _things_to_delete;
+
+// Hotfix for deleting old COMMANDER_TERMINAL
+{
+    if (typeOf _x == COMMANDER_TERMINAL) then {
+        deleteVehicle _x;
+    };
+} forEach allMissionObjects "";
 
 params["_pos"];
 
@@ -1832,10 +1840,10 @@ private _initScript = "";
     if (typeName _padPos != "BOOL") then 
     {
         _finalPos = _padPos;
-        systemChat format ["Spawning vehicle %1 on pad: %2", _x, _padPos];
+        //systemChat format ["Spawning vehicle %1 on pad: %2", _x, _padPos];
     } else {
         _finalPos = _randomPosOverflow;
-        systemChat format ["Spawning vehicle %1 (overflow area): %2", _x, _randomPosOverflow];        
+        //systemChat format ["Spawning vehicle %1 (overflow area): %2", _x, _randomPosOverflow];        
     };
 
     _vehicle  = _x createVehicle _finalPos;

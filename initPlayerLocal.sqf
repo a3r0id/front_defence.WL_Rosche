@@ -233,7 +233,7 @@ _groupId  = groupId group player;
                     openMap true;
                     player onMapSingleClick {
                         onMapSingleClick '';
-                        [[_pos], "server\compositions\fobs\fob1.sqf"] remoteExec ["execVM", 2];
+                        [[_pos], "server\compositions\fobs\fob.sqf"] remoteExec ["execVM", 2];
                         hint "FOB Deployed";
                         player setPos _pos;
                         openMap false;
@@ -285,7 +285,7 @@ _groupId  = groupId group player;
                     openMap true;
                     player onMapSingleClick {
                         onMapSingleClick '';
-                        [[_pos], "server\compositions\fops\fop1.sqf"] remoteExec ["execVM", 2];
+                        [[_pos], "server\compositions\fops\fop.sqf"] remoteExec ["execVM", 2];
                         hint "FOP Deployed";
                         player setPos _pos;
                         openMap false;

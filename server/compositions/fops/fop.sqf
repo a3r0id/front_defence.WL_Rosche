@@ -1,6 +1,6 @@
 /*
 server\compositions\ + CURRENT_FOP_TYPE
-[getPos player] execVM "server\compositions\fops\fop1.sqf";
+[getPos player] execVM "server\compositions\fops\fop.sqf";
 */
 
 /*

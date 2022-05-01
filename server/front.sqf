@@ -132,8 +132,11 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 			// !([_x] call fnc_groupHasVehicle)
 
 			// If far from front then move to frontline.
-			if ( ([_x] call fnc_groupMedianPosition) distance _front) > _ofdistance * 2) then 
-			{
+			_groupMedianPos = [_x] call fnc_groupMedianPosition;
+			_gmposP = [_groupMedianPos select 0, _groupMedianPos select 1, 0];
+			_frposP = [_front select 0, _front select 1, 0];
+			
+			if ( (_gmposP distance2D _frposP) > _ofdistance) then {
 				// If OPFOR unit (not in vehicle) is outside the calculated front, direct them towards the calculated front.
 				deleteWaypoint [_x, (currentWaypoint _x)]; // Replace the current waypoint
 				private _group = _x;
@@ -156,12 +159,12 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 				_wp setWaypointLoiterRadius _general_fronts_radians;
 				_wp setWaypointLoiterType "CIRCLE_L";		
 
-				systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
+				//systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
 
 			} else { // If inside the calculated front, task defend the frontlines.
 				if (selectRandom[true, false, false, false]) then {
 					[_x, _front] call bis_fnc_taskDefend;
-					systemChat format["%1 is defending the frontlines.", _x];
+					//systemChat format["%1 is defending the frontlines.", _x];
 				};
 			};
 

@@ -195,10 +195,10 @@ _ctrlButton ctrlAddEventHandler ["ButtonClick",
 			//private _dropHeight = [[0, 0, 100], _padPos] call BIS_fnc_vectorAdd;
 			//_spawnPos = [_dropHeight, 0, 5, 3, 0, 20, 0] call BIS_fnc_findSafePos;
 			_spawnPos = _padPos;
-			systemChat format["Spawning %1 at parking spot %2", typeOf _vehicle, _padPos];
+			//systemChat format["Spawning %1 at parking spot %2", typeOf _vehicle, _padPos];
 		} else {
 			_spawnPos = [getPos respawn_vehicle_west, 1, 100, 5, 0, 20, 0] call BIS_fnc_findSafePos;
-			systemChat format["Spawning %1 at overflow spot (random) %2", typeOf _vehicle, _padPos];
+			//systemChat format["Spawning %1 at overflow spot (random) %2", typeOf _vehicle, _padPos];
 		};
 		
 		private _vehicle = createVehicle [_class, _spawnPos, [], 0, "NONE"];

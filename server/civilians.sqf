@@ -3,7 +3,7 @@ _front = missionNamespace getVariable ["FRONT_POS", []];
 _bf_distance = missionNamespace getVariable ["BLUFOR_DISTANCE", 500];
 
 if (count _front < 1) exitWith {
-	systemChat "No FRONT_POS found, aborting civilian-manager for now...";
+	systemChat "[SERVER] No front found, aborting civilian-manager for now...";
 };
 
 

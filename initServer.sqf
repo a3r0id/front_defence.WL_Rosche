@@ -5,8 +5,8 @@ call compileFinal preprocessFile "config\opfor_infantry.sqf";
 systemChat "[DEBUG] OPFOR Configuration loaded";
 
 // Fob/fop type
-CURRENT_FOB_TYPE = "fob1.sqf";
-CURRENT_FOP_TYPE = "fop1.sqf";
+CURRENT_FOB_TYPE = "fob.sqf";
+CURRENT_FOP_TYPE = "fop.sqf";
 publicVariable "CURRENT_FOB_TYPE";
 publicVariable "CURRENT_FOP_TYPE";
 
@@ -288,13 +288,13 @@ if (RESTART_MISSION) then {
 
     // Build FOB
     if !(savedFobLocation isEqualTo false) then {
-        [savedFobLocation] execVM "server\compositions\fobs\fob1.sqf";
+        [savedFobLocation] execVM "server\compositions\fobs\fob.sqf";
         systemChat format["FOB BUILT - Fob Location: %1", savedFobLocation];
     };
 
     // Build FOP
     if !(savedFopLocation isEqualTo false) then {
-        [savedFopLocation] execVM "server\compositions\fops\fop1.sqf";
+        [savedFopLocation] execVM "server\compositions\fops\fop.sqf";
         systemChat format["FOP BUILT - Fop Location: %1", savedFopLocation];
     };
 
