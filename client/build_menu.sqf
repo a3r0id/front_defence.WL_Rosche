@@ -1,88 +1,37 @@
 PURCHASE_MENU_OPEN       = false;
 PURCHASE_MENU_CART_ITEMS = [];
 
-// Schema for assets in purchase menu:
-// [class, name, price, description, init, initscope(remoteexec)?]
-
-BUILD_MENU_BLUFOR 		 = [
-	[
-		"Armor",
-		[
-			["RHS_M2A3_BUSKIII_wd", "M2A3 Bradley (BUSK III)", 3166000, "The Bradley Fighting Vehicle (BFV) is a tracked<br> fighting vehicle platform of the United States<br> manufactured by BAE Systems Land<br> & Armaments, formerly United<br> Defense. It was named after U.S. General<br> Omar Bradley.", "", 0],
-			["B_GAF2_IFV_Puma_Fleck", "Puma IFV (20% Off!)", 346400000, "", "", 0]
-		]
-	],
-	[
-		"Service Trucks",
-		[
-			["B_GAF2_HEMMT_MED_Trop", "15T Medical", 200000, "", "", 0],
-			["B_GAF2_Truck_Ammo_Fleck", "Ammo Truck", 200000, "", "", 0],
-			["B_GAF2_Truck_Repair_Fleck", "Repair Truck", 200000, "", "", 0]
-		]
-	],
-	[
-		"Light Vehicles",
-		[
-			["rhsusf_mrzr4_d", "MRZR", 10000, "", "", 0]
-		]
-	],	
-	[
-		"Weapons",
-		[
-			["RHS_M2StaticMG_MiniTripod_WD", "M2 Static Mini", 2000, "", "", 0]
-		]
-	],
-	[
-		"Rotary",
-		[
-			["class", "name pretty!", 420, "A nice description", "", 0]
-		]
-	],
-	[
-		"Fixed-Wing",
-		[
-			["class", "name pretty!", 420, "A nice description", "", 0]
-		]
-	],
-	[
-		"Equipment",
-		[
-			["class", "name pretty!", 420, "A nice description", "", 0]
-		]
-	]
-];
-
 disableSerialization; 
 private _display = findDisplay 46 createDisplay "RscDisplayEmpty"; 
 
 ASSET_LISTBOX_POS = [0.25, 0, 0.5, 0.25];
 
-ASSET_LISTBOX = _display ctrlCreate ["RscControlsGroupNoScrollbars", (count BUILD_MENU_BLUFOR) + 1];
+ASSET_LISTBOX = _display ctrlCreate ["RscControlsGroupNoScrollbars", (count PURCHASE_MENU_ITEMS) + 1];
 ASSET_LISTBOX ctrlSetPosition ASSET_LISTBOX_POS;
 ASSET_LISTBOX ctrlSetBackgroundColor [0.1,0.1,0.1,1];
 ASSET_LISTBOX ctrlCommit 0;
 
-CURRENT_FUNDING_TEXT = _display ctrlCreate ["RscText", (count BUILD_MENU_BLUFOR) + 6, ASSET_LISTBOX];
+CURRENT_FUNDING_TEXT = _display ctrlCreate ["RscText", (count PURCHASE_MENU_ITEMS) + 6, ASSET_LISTBOX];
 CURRENT_FUNDING_TEXT ctrlSetPosition ([ [-0.25, -0.1, 0.01, 0], ASSET_LISTBOX_POS ] call BIS_fnc_vectorAdd);
 CURRENT_FUNDING_TEXT ctrlSetText format["Funds: %1", [CURRENT_FUNDING_BALANCE, true] call fnc_standardNumericalNotationString];
 CURRENT_FUNDING_TEXT ctrlCommit 0;
 
-ASSET_NAME = _display ctrlCreate ["RscText", (count BUILD_MENU_BLUFOR) + 2, ASSET_LISTBOX];
+ASSET_NAME = _display ctrlCreate ["RscText", (count PURCHASE_MENU_ITEMS) + 2, ASSET_LISTBOX];
 ASSET_NAME ctrlSetPosition ([ [-0.25,-0.05, 0.01, 0], ASSET_LISTBOX_POS ] call BIS_fnc_vectorAdd);
 ASSET_NAME ctrlSetText "Asset: ";
 ASSET_NAME ctrlCommit 0;
 
-ASSET_PRICE = _display ctrlCreate ["RscText", (count BUILD_MENU_BLUFOR) + 3, ASSET_LISTBOX];
+ASSET_PRICE = _display ctrlCreate ["RscText", (count PURCHASE_MENU_ITEMS) + 3, ASSET_LISTBOX];
 ASSET_PRICE ctrlSetPosition ([ [-0.25,0, 0.01, 0], ASSET_LISTBOX_POS ] call BIS_fnc_vectorAdd);
 ASSET_PRICE ctrlSetText "Price: ";
 ASSET_PRICE ctrlCommit 0;
 
-ASSET_TYPE = _display ctrlCreate ["RscText", (count BUILD_MENU_BLUFOR) + 4, ASSET_LISTBOX];
+ASSET_TYPE = _display ctrlCreate ["RscText", (count PURCHASE_MENU_ITEMS) + 4, ASSET_LISTBOX];
 ASSET_TYPE ctrlSetPosition ([ [-0.25,0.05, 0.01, 0], ASSET_LISTBOX_POS ] call BIS_fnc_vectorAdd);
 ASSET_TYPE ctrlSetText "Type: ";
 ASSET_TYPE ctrlCommit 0;
 
-//ASSET_DESCRIPTION = _display ctrlCreate ["RscText", (count BUILD_MENU_BLUFOR) + 5, ASSET_LISTBOX];
+//ASSET_DESCRIPTION = _display ctrlCreate ["RscText", (count PURCHASE_MENU_ITEMS) + 5, ASSET_LISTBOX];
 //ASSET_DESCRIPTION ctrlSetPosition ([ [-0.25,0.1,0.001,0], ASSET_LISTBOX_POS ] call BIS_fnc_vectorAdd);
 //ASSET_DESCRIPTION ctrlSetText "Description: ";
 //ASSET_DESCRIPTION ctrlCommit 0;
@@ -149,7 +98,7 @@ _groupArray           = [];
 
 	_group_index = _group_index + 1;
 
-} forEach BUILD_MENU_BLUFOR;
+} forEach PURCHASE_MENU_ITEMS;
 
 private _cancel = _display ctrlCreate ["RscShortcutButton", -1, _ctrlBackground]; 
 _cancel ctrlSetPosition [0.25, 0.75, 0.25, 0.05]; 

@@ -12,19 +12,17 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
     // If there is OPFOR & BLFOR THEN START THE FRONT DEFENCE ELSE IDLE
 	if (count _opfor > 0 && count _blufor > 0) then {
 
-
 		private _bfpos  = [];
 		private _bfx    = [];
 		private _bfy    = [];
 		{
-			try{
-				private _x_ = getPos _x select 0;
-				private _y_ = getPos _x select 1;
-				if (typeName _x_ == "SCALAR") then {_bfx pushBack _x_};
-				if (typeName _y_ == "SCALAR") then {_bfy pushBack _y_};
-			} catch {};
+			private _x_ = getPos _x select 0;
+			private _y_ = getPos _x select 1;
+			if (typeName _x_ == "SCALAR") then {_bfx pushBack _x_};
+			if (typeName _y_ == "SCALAR") then {_bfy pushBack _y_};
 		} forEach _blufor;
 		
+		if !(count _bfx > 0 && count _bfy > 0) then {continue};
 		private _bfxmean    = _bfx call BIS_fnc_arithmeticMean;
 		private _bfymean    = _bfy call BIS_fnc_arithmeticMean;
 
@@ -34,14 +32,13 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 		private _ofx    = [];
 		private _ofy    = [];		
 		{
-			try{
-				private _x_ = getPos _x select 0;
-				private _y_ = getPos _x select 1;
-				if (typeName _x_ == "SCALAR") then {_ofx pushBack _x_};
-				if (typeName _y_ == "SCALAR") then {_ofy pushBack _y_};
-			} catch {};
+			private _x_ = getPos _x select 0;
+			private _y_ = getPos _x select 1;
+			if (typeName _x_ == "SCALAR") then {_ofx pushBack _x_};
+			if (typeName _y_ == "SCALAR") then {_ofy pushBack _y_};
 		} forEach _opfor;
-
+		
+		if !(count _ofx > 0 && count _ofy > 0) then {continue};
 		private _ofxmean    = _ofx call BIS_fnc_arithmeticMean;
 		private _ofymean    = _ofy call BIS_fnc_arithmeticMean;
 
@@ -62,7 +59,7 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 		_difx = 0;
 		_dify = 0;
 
-		
+		// Get the difference between the two mean fronts
 		if (_bfxmean > _ofxmean) then {
 			_difx = ((_bfxmean - _ofxmean) / 2) + _ofxmean;
 		} else {
@@ -75,7 +72,6 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 			_dify = ((_ofymean - _bfymean) / 2) + _bfymean;
 		};
 		
-
 		private _front = [_difx, _dify];
 
 		missionNamespace setVariable ["FRONT_POS", _front, true];
@@ -123,7 +119,6 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 
 		};
 
-
 		// These guys are like linebackers, they are coming from the outside and sweep into the front.
 		{
 			// Redundant checks - hotfix :(
@@ -132,41 +127,53 @@ while {(missionNamespace getVariable ["IS_FRONT_DEFENCE", false]) == true} do {
 			// !([_x] call fnc_groupHasVehicle)
 
 			// If far from front then move to frontline.
-			_groupMeanPos = [_x] call fnc_groupMeanPosition;
-			_gmposP = [_groupMeanPos select 0, _groupMeanPos select 1, 0];
-			_frposP = [_front select 0, _front select 1, 0];
-			
-			if ( (_gmposP distance2D _frposP) > _ofdistance) then {
-				// If OPFOR unit (not in vehicle) is outside the calculated front, direct them towards the calculated front.
-				deleteWaypoint [_x, (currentWaypoint _x)]; // Replace the current waypoint
+			//_groupMeanPos = [_x] call fnc_groupMeanPosition; // ERROR: arithmetic mean: size 0, expected 1
+			_groupMeanPos = getPos (leader _x);
+
+			if !(
+				(typeName (_groupMeanPos select 0) == "SCALAR") && ((_groupMeanPos select 0) > 0)
+				&& (typeName (_groupMeanPos select 1) == "SCALAR") && ((_groupMeanPos select 1) > 0) 
+				&& (typeName (_groupMeanPos select 2) == "SCALAR") && ((_groupMeanPos select 2) > 0)
+				) then {continue}; // Ensure _groupMeanPos is not empty or fucked up (NaN in pos vector) - hotfix.
+
+			//systemChat format ["_groupMeanPos: %1", _groupMeanPos];
+
+			if ( (_groupMeanPos distance2D _front) > _ofdistance) then {
+
+				//deleteWaypoint [_x, (currentWaypoint _x)]; // Replace the current waypoint
 				private _group = _x;
 				{
 					deleteWaypoint _x;
 				} forEach (waypoints _group);
 
+				// If OPFOR unit (not in vehicle) is outside the calculated front, direct them towards the calculated front.
 				private _rnpos = [_front, _ofdistance] call fnc_randPosSafe;
 
-				private _general_fronts_radians = [_ofdistance, _bfdistance] call BIS_fnc_arithmeticMean;
+				private _general_fronts_mean = [_ofdistance, _bfdistance] call BIS_fnc_arithmeticMean;
 
-				private _wp = _x addWaypoint [_rnpos, _general_fronts_radians / 2, (currentWaypoint _x) + 1, "move_to_front"];
+				private _wp = _x addWaypoint [_rnpos, _general_fronts_mean / 2, (currentWaypoint _x) + 1, "move_to_front"];
 
 				_wp setWaypointBehaviour "COMBAT";
 				_wp setWaypointCombatMode "RED";
 				_wp setWaypointFormation "NO CHANGE";
 				_wp setWaypointSpeed "FULL";
-				_wp setWaypointTimeout [120, 300, 600];
+				_wp setWaypointTimeout [5, 10, 6];
 				_wp setWaypointType "SAD";
-				_wp setWaypointLoiterRadius _general_fronts_radians;
+				_wp setWaypointLoiterRadius _general_fronts_mean;
 				_wp setWaypointLoiterType "CIRCLE_L";		
 
 				//systemChat format["%1 is outside the calculated front. Moving to the front.", _x];	
 
-			} else { // If inside the calculated front, task defend the frontlines.
+			};
+			/*
+			else { // If inside the calculated front, task defend the frontlines.
 				if (selectRandom[true, false, false, false]) then {
 					[_x, _front] call bis_fnc_taskDefend;
 					//systemChat format["%1 is defending the frontlines.", _x];
 				};
-			};
+			}			
+			*/
+
 
 			// is: opfor/alive/not ignored or managed.
 		} forEach allGroups findif {

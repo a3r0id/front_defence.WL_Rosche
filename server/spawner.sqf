@@ -193,15 +193,39 @@ for "_i" from 1 to _infantryAmount do {
 	_group setSpeedMode "FULL";
 	_group enableAttack true;
 
-	// LAMBS_danger.fsm - dynamicReinforce
-	//_group setVariable ["lambs_danger_enableGroupReinforce", true, true];	
+	// [i] - In case of static emplacement, the first element in the unit array is 
+	switch (_FD_group_name) do {
+		case "mortar_team": {
+			// FD_MORTAR_CLASS
+			_mortar = createVehicle ["min_rf_Mortar", _generalpos, [], 0, "NONE"];
+			[_mortar, [], [], true] call BIS_fnc_initVehicle;
+			{_mortar removeMagazineTurret (_x select [0, 2])} forEach magazinesAllTurrets _mortar;
+			{_mortar addMagazineTurret _x} forEach [
+				["FakeWeapon",[-1],1],
+				["8Rnd_82mm_Mo_shells",[0],8]
+			];
+			_mortar addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}]; // Unlimited Ammo for the mortar. :smiling_devil:
+			_mortar setVariable ["IS_MANAGED", true]; // $is_managed so the FD-effect doesn't fuck w/ our mortar, dude.
+			(leader _group) moveInGunner _mortar; // Hop in broh.
 
-
-	// Patrol the radius
-	[_group, getPos _trigger, _infantryRadius] call BIS_fnc_taskPatrol;
-
-	//systemChat format ["Spawned Group: %1", _FD_group_name];	
-
+			// Manage our dood
+			[_mortar, leader _group] spawn {
+				systemChat "[DEBUG] Mortar spawned.";
+				params["_mortar", "_unit"];
+				while {alive _unit} do {
+					{(group _unit) reveal[_x, 1.5]} forEach allPlayers;
+					sleep 5;
+				};
+			};
+		};
+		default {
+			// Patrol the radius
+			[_group, getPos _trigger, _infantryRadius] call BIS_fnc_taskPatrol;
+			//systemChat format ["Spawned Group: %1", _FD_group_name];	
+			// LAMBS_danger.fsm - dynamicReinforce
+			//_group setVariable ["lambs_danger_enableGroupReinforce", true, true];				
+		};
+	};
 };
 
 systemChat format ["Spawned %1 total units", count _units];

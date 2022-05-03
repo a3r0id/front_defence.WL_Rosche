@@ -56,5 +56,10 @@ FD_INFANTRY_GROUPS = [
 		"min_rf_spetsnaz_GL",
 		"min_rf_spetsnaz_AR",
 		"min_rf_spetsnaz_AR"
+	]],
+	["mortar_team", [
+		"min_rf_Mortar"
 	]]
 ];
+
+FD_MORTAR_CLASS = "min_rf_Mortar";

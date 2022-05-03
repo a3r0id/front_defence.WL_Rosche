@@ -171,21 +171,21 @@ fnc_groupHasVehicle = {
     false
 };
 
-fnc_groupMeanPosition = {
+fnc_groupMeanPosition = { // Broken-ass fucked up shit.
     params["_group"];
     private _px = []; private _py = []; private _pz = [];
     {
         private _pos = getPos _x;
         _px pushBack (_pos select 0);
         _py pushBack (_pos select 1);
-        _pz pushBack (_pos select 2);
     } forEach units _group;
-
-    [
-        round (_px call BIS_fnc_arithmeticMean),
-        round (_py call BIS_fnc_arithmeticMean),
-        round (_pz call BIS_fnc_arithmeticMean)
-    ]
+    private _out = [
+        _px call BIS_fnc_arithmeticMean,
+        _py call BIS_fnc_arithmeticMean,
+        0
+    ]; 
+    // Stupid ass fucked up typing in SQF, fuck SCALAR and fuck SCALAR NaN, there's no damned difference, fuuuuuuuuck this shit.
+    _out
 };
 
 fnc_server_setFobLocation = {
